@@ -1,0 +1,15 @@
+[project]
+name = "aivisible-fix"
+version = "0.2.0"
+description = "Audit and auto-fix a website's visibility to AI crawlers and answer engines (GPTBot, ClaudeBot, PerplexityBot, and more)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+aivisible-fix = "aivisible_fix.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
