@@ -1,0 +1,35 @@
+name: Join the hosted-monitoring waitlist
+description: Get notified when continuous AI-visibility monitoring (paid tier) launches.
+title: "[waitlist] "
+labels: ["waitlist"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The free CLI (`pip install aivisible-fix`) is fully usable today and always will be.
+        This waitlist is for the *hosted* tier: scheduled re-audits, regression alerts, and
+        an auto-PR when your site's AI-crawler visibility breaks — not built yet, and won't
+        be until there's real demand. Opening this issue is that signal.
+  - type: input
+    id: site
+    attributes:
+      label: Site you'd want monitored
+      placeholder: https://example.com
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: You're evaluating this as
+      options:
+        - A single site owner
+        - An agency managing multiple client sites
+        - Something else (say so below)
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else? (how many sites, what price would feel fair, etc.)
+    validations:
+      required: false

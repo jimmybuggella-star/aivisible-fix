@@ -70,17 +70,27 @@ score (red under 50, amber under 80, green at 80+).
 ## Install
 
 ```
-pip install -e .
+pip install aivisible-fix
 ```
+
+Or from source: `pip install -e .`
+
+## Hosted monitoring — coming if there's demand
+
+The CLI above is free forever. A hosted tier (scheduled re-audits,
+regression alerts, an auto-PR when your visibility breaks) is designed
+(`hosted/schema.sql`) but not built — it's not worth building before real
+demand exists. If you'd use it, [open a waitlist
+issue](../../issues/new?template=waitlist.yml) — that's the actual signal
+this project is watching.
 
 No dependencies beyond the Python 3.10+ standard library — deliberately, so
 it's trivial to also ship as a single-file GitHub Action.
 
 ## Status
 
-v0.1 — functional CLI, tested against live sites (see commit history / this
-was built and smoke-tested against example.com and nytimes.com, correctly
-detecting NYT's well-documented blanket block of AI crawlers). Not yet
-published to PyPI or packaged as a GitHub Action — see BUSINESS_PLAN.md for
-what's next and what needs a human to do it (PyPI account, GitHub App
-registration, a payment processor for the paid tier).
+v0.2 — live on PyPI (`pip install aivisible-fix`), CI auto-publishes new
+releases. Tested against live sites (example.com and nytimes.com,
+correctly detecting NYT's well-documented blanket block of AI crawlers).
+Not yet packaged as a GitHub Action — see BUSINESS_PLAN.md for what's next
+and what still needs a human (payment processor for the paid tier).
