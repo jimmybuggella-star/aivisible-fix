@@ -1,5 +1,8 @@
 # aivisible-fix
 
+**Website:** https://raw.githack.com/jimmybuggella-star/aivisible-fix/main/docs/index.html
+· **Install:** `pip install aivisible-fix`
+
 Audits a website for the specific things that make it invisible to AI
 crawlers and AI answer engines (ChatGPT, Claude, Perplexity, Gemini/AI
 Overviews, and others) — and, unlike the free "checker" tools already on
