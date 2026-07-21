@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>aivisible-fix — audit &amp; fix your site's AI-crawler visibility</title>
+<meta name="description" content="Audit a website against 17 AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) and generate the fix — patched robots.txt + llms.txt. Free, open source, pip install.">
+<style>
+  :root {
+    --paper:#EDEFEA; --paper-raised:#E3E6DE; --ink:#171D1A; --muted:#5B655E;
+    --accent:#E85A2A; --accent-ink:#fff; --allow:#2E8B57; --block:#C6432E;
+    --line:rgba(23,29,26,.14); --line-strong:rgba(23,29,26,.28); --code-bg:#E3E6DE;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#12160F; --paper-raised:#191F17; --ink:#ECEEE8; --muted:#929C93;
+    --accent:#FF8558; --accent-ink:#171D1A; --allow:#52C285; --block:#FF6E56;
+    --line:rgba(236,238,232,.14); --line-strong:rgba(236,238,232,.28); --code-bg:#191F17;
+    color-scheme:dark;
+  }}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);line-height:1.55;
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+  .mono{font-family:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace}
+  .wrap{max-width:860px;margin:0 auto;padding:0 24px}
+  header.top{border-bottom:1px solid var(--line);padding:18px 0}
+  header.top .wrap{display:flex;align-items:center;justify-content:space-between}
+  .brand .name{font-weight:700;letter-spacing:-.01em;font-size:15px}
+  .brand .tag{font-size:12px;color:var(--muted);margin-left:10px}
+  nav.top-links{display:flex;gap:20px;font-size:13px}
+  nav.top-links a{color:var(--muted);text-decoration:none}
+  nav.top-links a:hover{color:var(--ink)}
+  .hero{padding:64px 0 40px}
+  .eyebrow{font-size:12.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin:0 0 18px}
+  h1{font-size:clamp(34px,5.4vw,54px);line-height:1.06;letter-spacing:-.02em;margin:0 0 20px;text-wrap:balance;max-width:15ch}
+  h1 em{font-style:normal;color:var(--accent)}
+  .lede{font-size:18px;color:var(--muted);max-width:56ch;margin:0 0 32px}
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:3px;font-size:14.5px;font-weight:600;text-decoration:none;border:1px solid transparent;cursor:pointer}
+  .btn-primary{background:var(--accent);color:var(--accent-ink)}
+  .btn-primary:hover{filter:brightness(1.06)}
+  .btn-ghost{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:12px}
+  section{padding:52px 0;border-top:1px solid var(--line)}
+  .kicker{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--accent);margin:0 0 14px}
+  h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.01em;margin:0 0 16px;text-wrap:balance}
+  p.body-text{color:var(--ink);max-width:62ch;margin:0 0 14px}
+  p.body-text.muted{color:var(--muted)}
+  pre{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:16px 18px;overflow-x:auto;line-height:1.6;margin:18px 0}
+  .term-pass{color:var(--allow)} .term-fail{color:var(--block)} .term-muted{color:var(--muted)}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
+  @media (max-width:720px){.grid-3{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line);border-radius:4px;padding:18px;background:var(--paper-raised)}
+  .card .pts{font-family:ui-monospace,monospace;font-size:12px;color:var(--accent);margin-bottom:8px}
+  .card h3{font-size:15px;margin:0 0 8px}
+  .card p{font-size:13.5px;color:var(--muted);margin:0}
+  footer{border-top:1px solid var(--line);padding:32px 0 48px}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;font-size:12.5px;color:var(--muted)}
+  footer a{color:var(--muted)}
+  a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="name mono">aivisible-fix</span><span class="tag">open source · MIT</span></div>
+    <nav class="top-links">
+      <a href="#how">How it works</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/jimmybuggella-star/aivisible-fix">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Open source · zero dependencies · runs on your machine</p>
+      <h1>Your robots.txt might be quietly telling <em>ChatGPT</em> not to read your site.</h1>
+      <p class="lede">
+        <span class="mono">aivisible-fix</span> audits a website against 17 known AI crawlers —
+        GPTBot, ClaudeBot, PerplexityBot, Google-Extended, and more — then <strong>writes the fix</strong>:
+        a patched <span class="mono">robots.txt</span> and a starter <span class="mono">llms.txt</span>,
+        ready to deploy. Not another score.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://pypi.org/project/aivisible-fix/">pip install aivisible-fix</a>
+        <a class="btn btn-ghost" href="https://github.com/jimmybuggella-star/aivisible-fix">View source on GitHub</a>
+      </div>
+      <p class="hint">Python 3.10+, standard library only. <a href="#waitlist">Hosted monitoring waitlist ↓</a></p>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <p class="kicker"># what it checks</p>
+      <h2>Six checks, weighted toward what actually causes invisibility.</h2>
+      <div class="grid-3">
+        <div class="card"><div class="pts">40 pts</div><h3>No AI crawler blocked</h3><p>Checked per-agent against 17 known crawlers, not just a blanket Disallow.</p></div>
+        <div class="card"><div class="pts">20 pts</div><h3>llms.txt present</h3><p>The emerging llmstxt.org convention: a short, LLM-readable summary of your site.</p></div>
+        <div class="card"><div class="pts">15 pts</div><h3>Sitemap valid</h3><p>How crawlers discover your full page list instead of guessing from links.</p></div>
+        <div class="card"><div class="pts">15 pts</div><h3>Structured data</h3><p>JSON-LD is what answer engines lean on to extract facts without guessing.</p></div>
+        <div class="card"><div class="pts">5 pts</div><h3>Sitemap in robots.txt</h3><p>Exists-but-undiscoverable is nearly as bad as missing.</p></div>
+        <div class="card"><div class="pts">5 pts</div><h3>robots.txt reachable</h3><p>The first file every crawler reads.</p></div>
+      </div>
+
+      <p class="kicker" style="margin-top:40px"># real output, run against nytimes.com</p>
+      <pre>AI-visibility audit for https://nytimes.com
+Score: 40/100
+
+  [PASS] robots_reachable: robots.txt found.
+  [<span class="term-fail">FAIL</span>] no_ai_crawlers_blocked: 14 AI crawler(s) explicitly blocked:
+        GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, Claude-Web, ...
+  [<span class="term-fail">FAIL</span>] llms_txt_present: No /llms.txt found.
+  [<span class="term-pass">PASS</span>] sitemap_present: sitemap.xml found and looks valid.</pre>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <p class="kicker"># install &amp; use</p>
+      <h2>Two commands.</h2>
+      <pre>$ pip install aivisible-fix
+
+<span class="term-muted"># score any site</span>
+$ aivisible-fix audit https://example.com
+
+<span class="term-muted"># generate the fix — writes local files, publishes nothing</span>
+$ aivisible-fix fix https://example.com --name "Example Co" --description "..."
+Wrote robots.fixed.txt
+Wrote llms.txt</pre>
+    </div>
+  </section>
+
+  <section id="waitlist">
+    <div class="wrap">
+      <p class="kicker"># hosted monitoring</p>
+      <h2>Want it to run continuously and alert you when visibility breaks?</h2>
+      <p class="body-text muted">
+        The CLI above is free forever. A hosted tier — scheduled re-audits, regression alerts, and an
+        auto-PR when your site's AI-crawler visibility breaks — is coming if there's demand. If you'd
+        use it, join the waitlist. That's the real signal this project is watching.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/jimmybuggella-star/aivisible-fix/issues/new?template=waitlist.yml">Join the waitlist</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>MIT licensed · no telemetry, no account, no data collected · HTTPS-only by design</span>
+    <span><a href="https://github.com/jimmybuggella-star/aivisible-fix">github.com/jimmybuggella-star/aivisible-fix</a></span>
+  </div>
+</footer>
+</body>
+</html>
